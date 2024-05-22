@@ -1,0 +1,10 @@
+FROM confluentinc/cp-kafka:latest
+
+# Copy the initialization script
+COPY init-kafka.sh /usr/local/bin/init-kafka.sh
+
+# Ensure the entrypoint uses the initialization script
+ENTRYPOINT ["/usr/local/bin/init-kafka.sh"]
+
+# CMD to start Kafka
+CMD ["/etc/confluent/docker/run"]
