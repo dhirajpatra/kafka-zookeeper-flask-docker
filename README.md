@@ -70,4 +70,4 @@ This will start all the necessary services (Zookeeper, Kafka, and the Flask appl
 3. Rebuild the Docker images using `docker-compose build`.
 4. Restart the application containers using `docker-compose up -d`.
 
-This README provides a comprehensive overview of the application's functionality, dependencies, and API details. Feel free to customize it further as needed.
+Feel free to get more details in https://dhirajpatra.blogspot.com
