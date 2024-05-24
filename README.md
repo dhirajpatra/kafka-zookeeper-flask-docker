@@ -1,73 +1,95 @@
-Flask Kafka Zookeeper Docker application for pizza ordering, incorporating library context and API details:
 
-# Pizza Ordering Docker Application with Flask, Kafka, and Zookeeper
+# Kafka Producer and Consumer with Python multiprocessing and Docker
 
-This application simulates a pizza ordering system using Flask, Kafka, and Zookeeper. Here's an overview of the technologies used:
+## Overview
 
-* **Flask:** A lightweight web framework for building Python web applications. ([https://flask.palletsprojects.com/](https://flask.palletsprojects.com/))
-* **Kafka:** A distributed streaming platform for handling real-time data feeds. ([https://kafka.apache.org/](https://kafka.apache.org/))
-* **Zookeeper:** A distributed coordination service for distributed applications. ([https://zookeeper.apache.org/](https://zookeeper.apache.org/))
+This application demonstrates a Kafka setup with a producer and consumer using Python multiprocessing, Docker, and Docker Compose. The producer sends messages to a Kafka topic, and the consumer reads messages from the same topic. The configuration settings for Kafka are managed using a properties file.
 
-**Docker Integration**
+Kafka server can handle multiple consumer processes simultaneously. Kafka is designed to support multiple consumers reading from the same topic concurrently, and each consumer group can have multiple consumer instances spread across different processes or even different machines.
 
-The application utilizes Docker containers to package and deploy the services:
+## Features
 
-* **zookeeper:** Runs a Zookeeper instance for service discovery and coordination.
-* **kafka:** Builds a Kafka container using a Dockerfile (Dockerfile_kafka) to handle message processing.
-* **flask-app:** Builds a Flask application container using a Dockerfile (Dockerfile_flask) to expose the pizza ordering API.
+- **Producer**: Sends messages to a Kafka topic multiprocess way.
+- **Consumer**: Reads messages from a Kafka topic multiprocess way.
+- **Configuration**: Managed using a `config.properties` file.
 
-**API Endpoints**
+## Prerequisites
 
-The Flask application provides the following API endpoints:
+- Docker and Docker Compose installed on your machine
 
-1. **/order/<count> (POST):** Places an order for a specified number of pizzas.
-    - **Request:**
-        - JSON body with a `count` field indicating the number of pizzas.
-    - **Response:**
-        - JSON object containing the generated `order_id`.
-2. **/order/<order_id> (GET):** Retrieves details of a specific order using its ID.
-    - **Request:**
-        - The `order_id` in the URL path.
-    - **Response:**
-        - JSON object containing the order details (implementation details in `pizza_service.py`).
-3. **/add_order (POST):** Adds a new order to the database (simulated behavior).
-    - **Request:**
-        - Optional JSON body with a `count` field indicating the number of pizzas. Defaults to `None`.
-    - **Response:**
-        - JSON message indicating successful order addition or error details.
-4. **/ (GET):** Checks the health of the Flask application.
-    - **Response:**
-        - JSON object with a status code (`200`) and a success message.
+## Installation
 
-**Library Context**
+1. **Clone the repository:**
 
-* **flask:** Used for creating the web application and handling API requests.
-* **json:** Used for encoding and decoding JSON data between the application and the client.
-* **threading:** Used for launching a consumer thread to process pizza orders asynchronously.
-
-**Running the Application**
-
-1. Build the Docker images:
    ```bash
-   docker-compose build
-   ```
-2. Run the application with Docker Compose:
-   ```bash
-   docker-compose up
+   git clone <repository_url>
+   cd <repository_directory>
    ```
 
-This will start all the necessary services (Zookeeper, Kafka, and the Flask application) in detached mode.
+2. **Create a `config.properties` file:**
 
-**Further Considerations**
+   ```ini
+   [kafka_client]
+   bootstrap.servers=broker:9092
+   security.protocol=PLAINTEXT
 
-* The `pizza_service.py` file is not included in this example. It likely contains functions for processing pizza orders, such as `order_pizzas` and `get_order`, and might interact with a database or other backend system.
-* The provided configuration simulates placing an order repeatedly within 30 seconds using a loop in the `add_order` endpoint. This might not be the desired behavior for a real-world application.
+   [consumer]
+   auto.offset.reset=earliest
+   group.id=pizza_shop
+   enable.auto.commit=true
+   max.poll.interval.ms=3000000
+   ```
 
-**Getting Started with Development**
+3. **Create a `requirements.txt` file:**
 
-1. Clone this repository to your local machine.
-2. Modify the code in the relevant Python files (e.g., `app.py`, `pizza_service.py`) to fit your specific requirements.
-3. Rebuild the Docker images using `docker-compose build`.
-4. Restart the application containers using `docker-compose up -d`.
+   ```text
+   confluent-kafka
+   configparser
+   ```
 
-Feel free to get more details in https://dhirajpatra.blogspot.com
+## Running the Application
+
+1. **Build and start the services:**
+
+   ```bash
+   docker-compose up --build
+   ```
+
+2. **Check the logs:**
+
+   To see the producer sending messages and the consumer receiving them:
+
+   ```bash
+   docker-compose logs -f
+   ```
+
+3. **Stopping the services:**
+
+   ```bash
+   docker-compose down
+   ```
+
+## Application Details
+
+### Producer (`producer.py`)
+
+The producer reads configuration from `config.properties` and sends messages to the Kafka topic.
+
+### Consumer (`consumer.py`)
+
+The consumer reads configuration from `config.properties` and subscribes to the Kafka topic to consume messages.
+
+## Docker Setup
+
+- **Dockerfile_producer**: Builds the Docker image for the producer.
+- **Dockerfile_consumer**: Builds the Docker image for the consumer.
+- **docker-compose.yml**: Manages multi-container Docker applications, including Kafka, Zookeeper, producer, and consumer.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+```
+
+This `README.md` provides a clear overview of what the application does, how to install it, and how to run it. Adjust the repository URL and directory names as needed.
+
+You can get more tutorial from https://dhirajpatra.blogspot.com

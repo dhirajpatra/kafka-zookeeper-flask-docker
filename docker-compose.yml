@@ -52,13 +52,19 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - "kafka-volume:/confluent"
 
-  flask-app:
-    container_name: flask-app
+  producer:
+    container_name: producer
     build:
       context: .
-      dockerfile: Dockerfile_flask
-    ports:
-      - "5000:5000"
+      dockerfile: Dockerfile_producer
+    depends_on:
+      - kafka
+
+  consumer:
+    container_name: consumer
+    build:
+      context: .
+      dockerfile: Dockerfile_consumer
     depends_on:
       - kafka
 

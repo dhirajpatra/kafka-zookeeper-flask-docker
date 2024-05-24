@@ -1,3 +1,2 @@
-Flask
 configparser
 confluent-kafka
